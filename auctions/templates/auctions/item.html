@@ -2,23 +2,38 @@
 
 {% block body %}
     <h3>{{id}}: {{title}}</h3>
-    {% if category %}
-    <h5>{{category}}</h5>
+    {% if active %}
+    <h6>Active</h6>
     {% endif %}
-    <h5>Current Bid Price: {{current_bid}}</h5>
+    
+    <h6>{{created_date}} by {{creator}}</h6>
+    {% if category %}
+    <h6>Category: {{category}}</h6>
+    {% endif %}
+    <h6>Starting Bid Price: {{starting_bid}} | Current Bid Price: {{current_bid}}</h6>
+    <hr>
     <p>{{description}}</p>
+    <hr>
+    {% if watchers %}
+    <h6>{{watchers}} {% if watchers == 1 %}person is{% else %}people are{% endif %} watching.</h6>
+    {% endif %}
 
-    <div>
-        {% if user.is_authenticated %}
-        <form method="post" action="{% url 'watchlist' id %}">
-            {% csrf_token %}
-
-            <input type="submit" value="Add to the Watch List">
-        </form>
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'watchlist' id %}">
+        {% csrf_token %}
+        {% if is_watched %}
+        <input type="submit" value="Remove from Watchlist">
         {% else %}
-            Not signed in.
+        <input type="submit" value="Add to Watchlist">
         {% endif %}
-    </div>
+
+    </form>
+    {% endif %}
+
+    <hr>
+
+
+
 
 
     <a href="{% url 'index' %}">Back to Item List</a>
