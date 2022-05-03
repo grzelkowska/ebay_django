@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -11,6 +11,28 @@ def index(request):
     return render(request, "auctions/index.html", {
         "listings": Listings.objects.all()
     })
+
+
+def item(request, item_id):
+    try:
+        listings = Listings.objects.get(id=item_id)
+    except:
+        raise Http404("Item not found")
+    
+    return render(request, "auctions/item.html", {
+        "id": listings.id,
+        "title": listings.title,
+        "description": listings.description,
+        "starting_bid": listings.starting_bid,
+        "current_bid": listings.current_bid,
+        "category": listings.category,
+        "active": listings.active,
+        "created_date": listings.created_date,
+        "creator": listings.creator,
+        "wathcers": listings.watchers,
+        # "url": listings.url,
+    })
+
 
 
 def login_view(request):

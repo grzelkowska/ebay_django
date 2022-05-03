@@ -1,0 +1,28 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h3>{{id}}: {{title}}</h3>
+    {% if category %}
+    <h5>{{category}}</h5>
+    {% endif %}
+    <h5>Current Bid Price: {{current_bid}}</h5>
+    <p>{{description}}</p>
+
+    <div>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'watchlist' id %}">
+            {% csrf_token %}
+
+            <input type="submit" value="Add to the Watch List">
+        </form>
+        {% else %}
+            Not signed in.
+        {% endif %}
+    </div>
+
+
+    <a href="{% url 'index' %}">Back to Item List</a>
+    
+    
+{% endblock %}
+

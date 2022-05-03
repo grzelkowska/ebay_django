@@ -2,21 +2,29 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    <ul>
+    <ol>
         {% for l in listings %}
         <li>
+            <a href="{% url 'item' l.id %}">
             {{l.id}}: {{l.title}}
             <br>
-            {{l.description}}
+            {% if l.category %}
+            Category: {{l.category}}
+            {% endif %}
             <br>
-            {{l.bid}}
+            Upload Date: {{l.created_date}} by {{l.creator}}
             <br>
-            {{l.url}}
+            Starting Bid: {{l.starting_bid}}
+            {% if l.current.bid %}
+            <br>
+            Current Bid: {{l.current_bid}}
+            {% endif %}
             <br>
             {{l.category}}
+            </a>
         </li>
         {% endfor %}
 
-    </ul>
+    </ol>
     
 {% endblock %}
