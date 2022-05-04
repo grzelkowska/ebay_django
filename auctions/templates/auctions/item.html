@@ -26,8 +26,21 @@
         {% else %}
         <input type="submit" value="Add to Watchlist">
         {% endif %}
-
     </form>
+
+    <form method="post" action="{% url 'bid' id %}">
+        {% csrf_token %}
+        <input type="number" placeholder="Your Bid Price" name="your_bid">
+        <input type="submit" value="Submit">
+    </form>
+
+    {% if messages %}
+    {% for message in messages %}
+    {{ message.tag }}
+    {{ message }}
+{% endfor %}
+    {% endif %}
+    
     {% endif %}
 
     <hr>
