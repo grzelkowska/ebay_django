@@ -25,7 +25,7 @@ class Listings(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name="all_creators")
     category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="similar_listings")
     watchers = models.ManyToManyField(User, blank=True, related_name="watch_list")
-    buyer = models.ForeignKey(User, null=True, on_delete=models.PROTECT)
+    buyer = models.ForeignKey(User, blank=True, null=True, on_delete=models.PROTECT)
 
     # url = models.CharField(blank=True, max_length=256)
 

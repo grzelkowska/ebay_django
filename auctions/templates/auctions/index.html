@@ -1,6 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+<h1>{{user}}</h1>
     <h2>Active Listings</h2>
     <ol>
         {% for l in listings %}
@@ -14,10 +15,10 @@
             <br>
             Upload Date: {{l.created_date}} by {{l.creator}}
             <br>
-            Starting Bid: {{l.starting_bid}}
+            Starting Bid: ${{l.starting_bid}}
             {% if l.current.bid %}
             <br>
-            Current Bid: {{l.current_bid}}
+            Current Bid: ${{l.current_bid}}
             {% endif %}
             <br>
             {{l.category}}

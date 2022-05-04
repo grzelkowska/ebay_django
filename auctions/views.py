@@ -1,30 +1,35 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.forms import ModelForm
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Listings, Bids
+from .models import User, Listings, Bids, Comments
 
-
-# class newBidForm(ModelForm):
-#     class Meta:
-#         model = Bids
-#         fields = ['offer']
 
 def index(request):
     return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
 
 
 def item(request, item_id):
-    try:
-        listings = Listings.objects.get(id=item_id)
+    is_watched = False
+    is_creator = False
+    is_buyer = False
+    # is_comment_owner = False
+    listings = Listings.objects.get(id=item_id)
+    comments = Comments.objects.filter(listing = listings)
+    if request.user.id:
         user = request.user
-    except:
-        raise Http404("Item not found")
+        creator = User.objects.get(username=user.username)
+        
+        if creator == listings.creator:
+            is_creator = True
+        is_buyer = False
+        if user == listings.buyer:
+            is_buyer = True
+        is_watched = listings.watchers.filter(pk=user.id)
 
     return render(
         request,
@@ -40,8 +45,11 @@ def item(request, item_id):
             "created_date": listings.created_date,
             "creator": listings.creator,
             "watchers": listings.watchers.count(),
-            "is_watched": listings.watchers.filter(pk=user.id)
-            # "url": listings.url,
+            "is_watched": is_watched,
+            "is_creator": is_creator,
+            "is_buyer": is_buyer,
+            "useruser": request.user,
+            "comments": comments,
         },
     )
 
@@ -58,6 +66,17 @@ def add_to_watchlist(request, item_id):
 
 
 @login_required
+def comment(request, item_id):
+    if request.method == "POST":
+        item = Listings.objects.get(pk=item_id)
+        user = request.user
+        your_comment = request.POST['your_comment']
+        newComment = Comments(user=user, listing=item, comment=your_comment)
+        newComment.save()
+    return HttpResponseRedirect(reverse("item", args=(item_id,)))
+
+
+@login_required
 def bid(request, item_id):
     # messages.warning(request, "test")
     if request.method == "POST":
@@ -66,7 +85,7 @@ def bid(request, item_id):
         user = User.objects.get(username=username)
         your_bid = float(request.POST["your_bid"])
         if item.current_bid:
-            bid_price=  item.current_bid
+            bid_price = item.current_bid
         else:
             bid_price = item.starting_bid
     
@@ -77,18 +96,29 @@ def bid(request, item_id):
         else:
             item.current_bid = your_bid
             item.save()
-            newBid = Bids.objects.filter(id=item_id)
+            newBid = Bids.objects.filter(auction=item)
             if newBid:
                 newBid.delete()
             newBid = Bids(auction=item, offer=your_bid, user=user)
             newBid.save()
 
-            
-            
+    return HttpResponseRedirect(reverse("item", args=(item_id,)))
 
-            # new_bid = Bids(auction=item_id)    
+
+@login_required
+def close_bid(request, item_id):
+    if request.method == "POST":
+        item = Listings.objects.get(pk=item_id)
+        item.active = False
+        item.save()
+        
+        bid = Bids.objects.get(auction=item)
+        user = bid.user
+        item.buyer = user
+        item.save()
 
     return HttpResponseRedirect(reverse("item", args=(item_id,)))
+        
             
 
 
