@@ -54,6 +54,17 @@ def item(request, item_id):
     )
 
 @login_required
+def watchlist(request):
+    watchlists = request.user.watch_list.all()
+    # user = request.user
+    # item = Listings.objects.
+    # watchlists = 
+    return render(request, "auctions/watchlist.html", {
+        "watchlists": watchlists
+    })
+
+
+@login_required
 def add_to_watchlist(request, item_id):
     if request.method == "POST":
         item = Listings.objects.get(pk=item_id)

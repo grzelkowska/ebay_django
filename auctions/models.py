@@ -30,7 +30,7 @@ class Listings(models.Model):
     # url = models.CharField(blank=True, max_length=256)
 
     def __str__(self):
-        return f"{self.id} - title: {self.title}, bid: {self.starting_bid}"
+        return f"{self.id} - title: {self.title}, bid: {self.current_bid}"
 
 
 class Bids(models.Model):
