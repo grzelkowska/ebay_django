@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Listings, Bids, Comments
+from .models import User, Listings, Bids, Comments, Categories
 
 
 def index(request):
@@ -52,6 +52,27 @@ def item(request, item_id):
             "comments": comments,
         },
     )
+
+def category(request):
+    categories = Categories.objects.all()
+
+    return render(request, "auctions/category.html", {
+        "categories": categories,
+    })
+
+def category_list(request, category_id):
+    # listings = Listings.objects.all()
+    categories = Listings.objects.filter(pk=category_id)
+
+    return render(request, "auctions/categoryList.html", {
+        "categories": categories,
+    })
+    # listings = Categories.similar_listings.filter(c)
+    # return render(request, "auctions/categoryList.html", {
+    #     "listings": listings,
+    # })
+
+
 
 @login_required
 def watchlist(request):
