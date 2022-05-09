@@ -15,7 +15,7 @@
     {% if category %}
     <h6><a href="{% url 'category_list' category_id %}">Category: {{category}}</a></h6>
     {% endif %}
-    <h6>Starting Bid Price: ${{starting_bid}} | Current Bid Price: ${{current_bid}}</h6>
+    <h6>Starting Bid Price: ${{starting_bid}} | {% if current_bid %}Current Bid Price: ${{current_bid}}{% else %}No Bid Yet{% endif %}</h6>
     {% if active == False %}
     <h6>Final Price: ${{current_bid}}</h6>
     {% endif %}

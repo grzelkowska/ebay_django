@@ -10,12 +10,6 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Listings, Bids, Comments, Categories
 
 
-# class NewListingForm(ModelForm):
-#     class Meta:
-#         model = Listings
-#         fields = ['title', 'description', 'starting_bid', 'category', 'image']
-
-
 def index(request):
     return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
 
@@ -24,10 +18,10 @@ def item(request, item_id):
     is_watched = False
     is_creator = False
     is_buyer = False
-    # is_comment_owner = False
     listings = Listings.objects.get(id=item_id)
     comments = Comments.objects.filter(listing = listings)
-    categories = Categories.objects.get(id=item_id)
+    categories = Categories.objects.get(category = listings.category)
+    # categories = listings.similar_listings.get(id=item_id)
     if request.user.id:
         user = request.user
         creator = User.objects.get(username=user.username)
@@ -74,8 +68,18 @@ def create_listing_new(request):
         description = request.POST['description']
         starting_bid = float(request.POST['starting_bid'])
         category = request.POST['category']
-        create_category = Categories(category=category)
-        create_category.save()
+        if Categories.objects.filter(category=category):
+            create_category = Categories.objects.get(category=category)
+
+        # try:
+        #     if Categories.objects.get(category=category):
+        #         create_category = Categories.objects.get(category=category)
+        # except:
+        #     create_category = Categories(category=category)
+        #     create_category.save()
+        else:
+            create_category = Categories(category=category)
+            create_category.save()
         creator = request.user
         image = request.FILES.get('image')
         new_posting = Listings(title=title, description=description, starting_bid=starting_bid, creator=creator, category=create_category, image=image)
@@ -96,24 +100,19 @@ def category(request):
 
 def category_list(request, category_id):
     # listings = Listings.objects.all()
-    categories = Listings.objects.filter(pk=category_id)
+    # categories = Listings.objects.filter(pk=category_id)
+    categories = Listings.objects.filter(category=category_id)
 
     return render(request, "auctions/categoryList.html", {
         "categories": categories,
     })
-    # listings = Categories.similar_listings.filter(c)
-    # return render(request, "auctions/categoryList.html", {
-    #     "listings": listings,
-    # })
 
 
 
 @login_required
 def watchlist(request):
     watchlists = request.user.watch_list.all()
-    # user = request.user
-    # item = Listings.objects.
-    # watchlists = 
+
     return render(request, "auctions/watchlist.html", {
         "watchlists": watchlists
     })
