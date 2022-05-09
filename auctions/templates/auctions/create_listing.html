@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <form method="post" action="{% url 'create_listing_new' %}">
+        {% csrf_token %}
+        Title: <br><input type="text" maxlength="64" class="title" name="title"><br>
+        Description: <br><textarea class="description" name="description" rows="10" cols="64"></textarea><br>
+        Starting Bid: <input type="number" class="starting_bid" name="starting_bid">
+        Category: <input type="text" maxlength="64" class="category" name="category"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+{% endblock %}

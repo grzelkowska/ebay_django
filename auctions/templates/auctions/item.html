@@ -13,7 +13,7 @@
     
     <h6>{{created_date}} by {{creator}}</h6>
     {% if category %}
-    <h6>Category: {{category}}</h6>
+    <h6><a href="{% url 'category_list' category_id %}">Category: {{category}}</a></h6>
     {% endif %}
     <h6>Starting Bid Price: ${{starting_bid}} | Current Bid Price: ${{current_bid}}</h6>
     {% if active == False %}

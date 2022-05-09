@@ -20,6 +20,7 @@ def item(request, item_id):
     # is_comment_owner = False
     listings = Listings.objects.get(id=item_id)
     comments = Comments.objects.filter(listing = listings)
+    categories = Categories.objects.get(id=item_id)
     if request.user.id:
         user = request.user
         creator = User.objects.get(username=user.username)
@@ -50,8 +51,31 @@ def item(request, item_id):
             "is_buyer": is_buyer,
             "useruser": request.user,
             "comments": comments,
+            "category_id": categories.id,
         },
     )
+
+def create_listing(request):
+    return render(request, "auctions/create_listing.html")
+
+
+def create_listing_new(request):
+    if request.method == "POST":
+        title = request.POST['title']
+        description = request.POST['description']
+        starting_bid = float(request.POST['starting_bid'])
+        category = request.POST['category']
+        create_category = Categories(category=category)
+        create_category.save()
+        creator = request.user
+        new_posting = Listings(title=title, description=description, starting_bid=starting_bid, creator=creator, category=create_category)
+        new_posting.save()
+    
+    return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
+
+
+
+
 
 def category(request):
     categories = Categories.objects.all()
