@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.forms import ModelForm
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -7,6 +8,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from .models import User, Listings, Bids, Comments, Categories
+
+
+# class NewListingForm(ModelForm):
+#     class Meta:
+#         model = Listings
+#         fields = ['title', 'description', 'starting_bid', 'category', 'image']
 
 
 def index(request):
@@ -52,10 +59,12 @@ def item(request, item_id):
             "useruser": request.user,
             "comments": comments,
             "category_id": categories.id,
+            "image": listings.image,
         },
     )
 
 def create_listing(request):
+    
     return render(request, "auctions/create_listing.html")
 
 
@@ -68,7 +77,8 @@ def create_listing_new(request):
         create_category = Categories(category=category)
         create_category.save()
         creator = request.user
-        new_posting = Listings(title=title, description=description, starting_bid=starting_bid, creator=creator, category=create_category)
+        image = request.FILES.get('image')
+        new_posting = Listings(title=title, description=description, starting_bid=starting_bid, creator=creator, category=create_category, image=image)
         new_posting.save()
     
     return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
@@ -130,6 +140,16 @@ def comment(request, item_id):
         newComment = Comments(user=user, listing=item, comment=your_comment)
         newComment.save()
     return HttpResponseRedirect(reverse("item", args=(item_id,)))
+
+
+@login_required
+def delete_comment(request, comment_id):
+    if request.method == "POST":
+        your_comment = Comments.objects.get(id=comment_id)
+        # item_id = your_comment.
+        if your_comment.user == request.user:
+            your_comment.delete()
+    return HttpResponseRedirect(reverse("item", args=(your_comment.listing.id,)))
 
 
 @login_required

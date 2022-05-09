@@ -26,6 +26,7 @@ class Listings(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="similar_listings")
     watchers = models.ManyToManyField(User, blank=True, related_name="watch_list")
     buyer = models.ForeignKey(User, blank=True, null=True, on_delete=models.PROTECT)
+    image = models.ImageField(null=True, blank=True, upload_to="images/")
 
     # url = models.CharField(blank=True, max_length=256)
 
@@ -49,8 +50,8 @@ class Comments(models.Model):
     def get_comment_creation_date(self):
         return self.created_time.strftime('%B %d %Y')
 
-class Pictures(models.Model):
-    listing = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="get_pictures")
-    picture = models.ImageField(upload_to="images/")
-    alt_text = models.CharField(max_length=128)
+# class Pictures(models.Model):
+#     listing = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="get_pictures")
+#     picture = models.ImageField(upload_to="images/")
+#     alt_text = models.CharField(max_length=128)
 

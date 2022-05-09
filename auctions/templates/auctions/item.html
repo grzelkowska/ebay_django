@@ -21,6 +21,9 @@
     {% endif %}
     <hr>
     <p>{{description}}</p>
+    {% if image %}
+    <img src="{{ image.url }}" width="500">
+    {% endif %}
     <hr>
     {% if watchers %}
     <h6>{{watchers}} {% if watchers == 1 %}person is{% else %}people are{% endif %} watching.</h6>
@@ -64,6 +67,12 @@
         {% for c in comments %}
         <li>
             {{c.comment}} <br>by {{c.user}} @ {{c.created_time}}
+            {% if c.user == user %}
+            <form action="{% url 'delete_comment' c.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Delete">
+            </form>
+            {% endif %}
         </li>
         {% endfor %}
     </ul>

@@ -17,4 +17,5 @@ urlpatterns = [
     path("category/<int:category_id>", views.category_list, name="category_list"),
     path("create_listing", views.create_listing, name="create_listing"),
     path("create_listing_new", views.create_listing_new, name="create_listing_new"),
+    path("<int:comment_id>/delete_comment", views.delete_comment, name="delete_comment")
 ]
