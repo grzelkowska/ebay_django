@@ -14,7 +14,6 @@ class Categories(models.Model):
         return f"{self.category}"
 
 class Listings(models.Model):
-    # title, text-based description, starting bid, optioanally URL for an image
     title = models.CharField(max_length=256)
     description = models.TextField(max_length=512)
     starting_bid = models.FloatField()
@@ -28,7 +27,6 @@ class Listings(models.Model):
     buyer = models.ForeignKey(User, blank=True, null=True, on_delete=models.PROTECT)
     image = models.ImageField(null=True, blank=True, upload_to="images/")
 
-    # url = models.CharField(blank=True, max_length=256)
 
     def __str__(self):
         return f"{self.id} - title: {self.title}, bid: {self.current_bid}"
@@ -49,9 +47,3 @@ class Comments(models.Model):
 
     def get_comment_creation_date(self):
         return self.created_time.strftime('%B %d %Y')
-
-# class Pictures(models.Model):
-#     listing = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="get_pictures")
-#     picture = models.ImageField(upload_to="images/")
-#     alt_text = models.CharField(max_length=128)
-

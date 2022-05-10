@@ -43,7 +43,7 @@
     {% if user.is_authenticated and is_creator == False %}
     <form method="post" action="{% url 'bid' id %}">
         {% csrf_token %}
-        <input type="number" placeholder="Your Bid Price" name="your_bid">
+        <input type="number" placeholder="Your Bid Price" name="your_bid" step="0.01">
         <input type="submit" value="Submit">
     </form>
     {% endif %}
